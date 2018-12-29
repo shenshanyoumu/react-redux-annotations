@@ -84,13 +84,13 @@ export function createConnect({
       // used in error messages
       methodName: "connect",
 
-      // used to compute Connect's displayName from the wrapped component's displayName.
+      // 便于调试HOC组件，使用wrappedComponent即开发者编写的react容器组件名
       getDisplayName: name => `Connect(${name})`,
 
-      // if mapStateToProps is falsy, the Connect component doesn't subscribe to store state changes
+      // 如果在react开发中，单纯使用connect而没有定义mapStateToProps,则不会监听应用store的state状态树变化
       shouldHandleStateChanges: Boolean(mapStateToProps),
 
-      // passed through to selectorFactory
+      //传递给选择器工厂函数的参数
       initMapStateToProps,
       initMapDispatchToProps,
       initMergeProps,
@@ -100,7 +100,7 @@ export function createConnect({
       areStatePropsEqual,
       areMergedPropsEqual,
 
-      // any extra options args can override defaults of connect or connectAdvanced
+      // 实际开发中额外的参数
       ...extraOptions
     });
   };

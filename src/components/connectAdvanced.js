@@ -20,10 +20,10 @@ const stringifyComponent = Comp => {
   }
 };
 
-// connectAdvanced属于高阶函数，即执行后返回内部函数。注意而内部函数才是HOC，即高阶组件
+// connectAdvanced属于高阶函数，即执行后返回内部函数。注意其内部函数才是HOC，即高阶组件
+// connect函数默认使用connectAdvanced作为核心实现部分
 export default function connectAdvanced(
-  //该工厂函数执行后返回selector函数，用于处理state/props/dispatch等产生的新的props；
-  //注意不要在react应用中直接使用connectAdvanced，因为不具备memorization能力导致性能开销
+  //该工厂函数执行后返回selector函数，用于处理react应用中store管理的state状态树变化、HOC组件自身的props变化；
   /**
    *  export default connectAdvanced((dispatch, options) => (state, props) => ({
         thing: state.things[props.thingId],
