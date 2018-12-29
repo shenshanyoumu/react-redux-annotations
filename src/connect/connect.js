@@ -4,28 +4,21 @@ import connectAdvanced from "../components/connectAdvanced";
 // 对象浅比较
 import shallowEqual from "../utils/shallowEqual";
 
+// 在react开发中，开发者一般会自定义下面三个子选择器函数
 import defaultMapDispatchToPropsFactories from "./mapDispatchToProps";
 import defaultMapStateToPropsFactories from "./mapStateToProps";
 import defaultMergePropsFactories from "./mergeProps";
+
+// 选择器工厂函数，执行后返回选择器函数。而选择器函数由若干个子选择器函数组成，比如mergeProps、
+// mapStateToProps和mapDispatchToProps等
 import defaultSelectorFactory from "./selectorFactory";
 
-/*
-  connect is a facade over connectAdvanced. It turns its args into a compatible
-  selectorFactory, which has the signature:
-
-    (dispatch, options) => (nextState, nextOwnProps) => nextFinalProps
-  
-  connect passes its args to connectAdvanced as options, which will in turn pass them to
-  selectorFactory each time a Connect component instance is instantiated or hot reloaded.
-
-  selectorFactory returns a final props selector from its mapStateToProps,
-  mapStateToPropsFactories, mapDispatchToProps, mapDispatchToPropsFactories, mergeProps,
-  mergePropsFactories, and pure args.
-
-  The resulting final props selector is called by the Connect component instance whenever
-  it receives new props or store state.
+/**
+ *
+ * @param {*} arg 表示子选择器，类似mapDispatchToProps
+ * @param {*} factories 表示子选择器工厂函数，类似defaultMapDispatchToPropsFactories
+ * @param {*} name 表示子选择器名称，类似“mapDispatchToProps”
  */
-
 function match(arg, factories, name) {
   for (let i = factories.length - 1; i >= 0; i--) {
     const result = factories[i](arg);
@@ -45,8 +38,14 @@ function strictEqual(a, b) {
   return a === b;
 }
 
-// createConnect with default args builds the 'official' connect behavior. Calling it with
-// different options opens up some testing and extensibility scenarios
+/**
+ *
+ * @param {*} connectHOC用于创建HOC组件的函数，在实际开发中一般默认使用connectAdvanced
+ * defaultMapStateToPropsFactories，在实际应用中，有开发者编写MapStateToProps函数/对象
+ * defaultMapDispatchToPropsFactories，在实际应用中，有开发者编写MapDispatchToProps函数/对象
+ * defaultMergePropsFactories，这个在实际应用中很少设置，主要目的是合并多种来源的子选择，为HOC组件提供统一的props
+ * defaultSelectorFactory，选择器函数工厂，用于生成选择器函数
+ */
 export function createConnect({
   connectHOC = connectAdvanced,
   mapStateToPropsFactories = defaultMapStateToPropsFactories,
@@ -58,6 +57,7 @@ export function createConnect({
     mapStateToProps,
     mapDispatchToProps,
     mergeProps,
+    // 下面表示可选的配置参数
     {
       pure = true,
       areStatesEqual = strictEqual,
@@ -79,6 +79,7 @@ export function createConnect({
     );
     const initMergeProps = match(mergeProps, mergePropsFactories, "mergeProps");
 
+    // connectHOC默认为ConnectAdvanced函数，用于生成HOC高阶函数
     return connectHOC(selectorFactory, {
       // used in error messages
       methodName: "connect",
